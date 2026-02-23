@@ -27,6 +27,7 @@ Villainy is a C++ graphics library and application framework built on Vulkan and
    ```
    ./build.sh
    ```
+   generates libVillainyLib.a in build/
 4. Run the example/your code after modifying it:
    ```
    ./run.sh
