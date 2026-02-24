@@ -11,6 +11,9 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 # Vulkan SDK
 find_package(Vulkan REQUIRED)
+if(NOT APPLE)
+    find_package(glfw3 REQUIRED)
+endif()
 
 # GLFW (binary)
 set(INCLUDE_ROOT ${CMAKE_SOURCE_DIR}/external)
@@ -57,9 +60,16 @@ target_compile_options(villainy PRIVATE
     $<$<CONFIG:Release>:-O3>
 )
 
-# link libraries
-target_link_libraries(villainy
-    Vulkan::Vulkan
-    glfw.3           # <-- IMPORTANT: matches libglfw.3.dylib
-    VillainyLib_static
-)
+if(APPLE)
+    target_link_libraries(villainy
+        Vulkan::Vulkan
+        glfw.3
+        VillainyLib_static
+    )
+else(UNIX)
+    target_link_libraries(villainy
+        Vulkan::Vulkan
+        glfw
+        VillainyLib_static
+    )
+endif()
