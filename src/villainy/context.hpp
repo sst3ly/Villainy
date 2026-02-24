@@ -10,6 +10,7 @@
 #include <set>
 #include <stdexcept>
 #include <utility>
+#include <optional>
 
 #include "logger.hpp"
 #include "utils.hpp"
@@ -45,9 +46,9 @@ struct SwapchainSupportDetails{
 
 struct ContextConfig{
     std::string appName = "villainy_app";
-    int appVersionMajor, appVersionMinor, appVersionPatch = 0;
+    int appVersionMajor = 0, appVersionMinor = 0, appVersionPatch = 0;
     std::string engineName = "villainy";
-    int engineVersionMajor, engineVersionMinor, engineVersionPatch = 0;
+    int engineVersionMajor = 0, engineVersionMinor = 0, engineVersionPatch = 0;
 
     std::vector<const char*> vulkanExts = {};
 
