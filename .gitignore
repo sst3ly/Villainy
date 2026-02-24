@@ -20,6 +20,8 @@ CMakeUserPresets.json
 
 
 build/
+target/
 /.vscode
 /.VSCodeCounter
 .DS_STORE
+Villainy.zip
