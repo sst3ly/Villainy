@@ -1,6 +1,6 @@
 # Villainy
 
-Villainy is a C++ graphics library and application framework built on Vulkan and GLFW, designed for creating high-performance, cross-platform graphical applications.
+Villainy is a C++ graphics implementation layer library built on Vulkan and GLFW, designed for creating high-performance, cross-platform graphical applications.
 
 ## Features
 - Vulkan-based rendering
