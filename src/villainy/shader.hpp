@@ -19,7 +19,7 @@ struct ShaderLoadInfo{
     VkShaderStageFlagBits stage;
     std::string filepath;
     std::string entrypoint = "main";
-    VkSpecializationInfo* VkSpecializationInfo = nullptr; // shader constants
+    VkSpecializationInfo* vkSpecializationInfo = nullptr; // shader constants
 };
 
 struct ShaderLayoutDescriptor{
