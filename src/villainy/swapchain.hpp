@@ -8,6 +8,7 @@
 #include <limits>
 #include <stdexcept>
 #include <optional>
+#include <algorithm>
 
 #include "renderpass.hpp"
 
