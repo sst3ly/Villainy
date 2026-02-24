@@ -18,7 +18,7 @@ ShaderProgram::ShaderProgram(Context& context, std::vector<ShaderLoadInfo> shade
         vkShaderStages[i].stage = shaderInfos[i].stage;
         vkShaderStages[i].module = vkShaderModules[i];
         vkShaderStages[i].pName = shaderEntrypoints[i].c_str();
-        vkShaderStages[i].pSpecializationInfo = shaderInfos[i].VkSpecializationInfo;
+        vkShaderStages[i].pSpecializationInfo = shaderInfos[i].vkSpecializationInfo;
     }
     VILLAINY_VERBOSE_LOG(context.logger, "Created shader modules & stages.");
 
