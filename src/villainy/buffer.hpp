@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <stdint.h>
+#include <cstring>
 
 #include "logger.hpp"
 #include "context.hpp"

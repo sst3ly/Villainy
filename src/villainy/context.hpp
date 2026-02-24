@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <utility>
 #include <optional>
+#include <cstring>
 
 #include "logger.hpp"
 #include "utils.hpp"
