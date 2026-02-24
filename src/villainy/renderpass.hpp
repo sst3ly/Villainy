@@ -10,10 +10,6 @@
 #include <string>
 #include <utility>
 
-#include "shader.hpp"
-#include "command.hpp"
-#include "buffer.hpp"
-
 namespace vlny{
 
 struct RenderPass{

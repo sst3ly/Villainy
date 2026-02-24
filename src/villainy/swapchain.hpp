@@ -23,6 +23,8 @@ public:
     Swapchain(Context& context, Window& window);
 
     void cleanup();
+    VkExtent2D getExtent();
+    VkFormat getImageFormat();
 private:
     Context& context;
     Window& window;

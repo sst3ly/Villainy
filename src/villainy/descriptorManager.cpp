@@ -5,7 +5,7 @@
 
 namespace vlny{
 
-DescriptorManager::DescriptorManager(Context& context) : context(context), maxFramesInFlight(context.config.maxFramesInFlight) {}
+DescriptorManager::DescriptorManager(Context& context, Window& window) : context(context), maxFramesInFlight(window.getConfig().maxFramesInFlight) {}
 
 DescriptorManager::~DescriptorManager() {
     cleanup();

@@ -57,16 +57,16 @@ int main(){
 
             VkDescriptorPoolSize poolSize{};
             poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            poolSize.descriptorCount = static_cast<uint32_t>(cfg.maxFramesInFlight);
+            poolSize.descriptorCount = static_cast<uint32_t>(window.getConfig().maxFramesInFlight);
 
-            vlny::UniformBuffer uniformBuffer(context, sizeof(DummyUbo), {poolSize});
+            vlny::UniformBuffer uniformBuffer(context, window.getConfig(), sizeof(DummyUbo), {poolSize});
             uniformBuffer.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
             uniformBuffer.createDescriptorSetLayout();
             uniformBuffer.allocateDescriptorSets();
             uniformBuffer.updateDescriptorSets();
 
             DummyUbo dummy{};
-            for(uint32_t i = 0; i < static_cast<uint32_t>(cfg.maxFramesInFlight); ++i){
+            for(uint32_t i = 0; i < static_cast<uint32_t>(window.getConfig().maxFramesInFlight); ++i){
                 uniformBuffer.updateBuffer(i, &dummy);
             }
 

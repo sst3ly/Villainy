@@ -7,7 +7,7 @@ namespace vlny{
 
 template <typename Vertex>
 Renderer<Vertex>::Renderer(Context& context, Window& window, GraphicsPipeline& pipeline, Swapchain& swapchain) : context(context), window(window), pipeline(pipeline), swapchain(swapchain), commandPool(context){
-    cmdBufs = commandPool.createCommandBuffers(context, context.config.maxFramesInFlight);
+    cmdBufs = commandPool.createCommandBuffers(context, window.getConfig().maxFramesInFlight);
 }
 
 template <typename Vertex>
@@ -73,7 +73,7 @@ void Renderer<Vertex>::drawFrame(){
         throw std::runtime_error("Failed to present swap chain image!");
     }
 
-    currentFrame = (currentFrame + 1) % context.config.maxFramesInFlight;
+    currentFrame = (currentFrame + 1) % window.getConfig().maxFramesInFlight;
 }
 
 template<typename Vertex>

@@ -46,6 +46,9 @@ void Swapchain::cleanup(){
     }
 }
 
+VkExtent2D Swapchain::getExtent(){ return swapchainExtent; }
+VkFormat Swapchain::getImageFormat(){ return swapchainImageFormat; }
+
 void Swapchain::init(){
     context.renderInit(window);
     createVkSwapchain();
@@ -156,9 +159,9 @@ void Swapchain::createFramebuffers(){
     VILLAINY_VERBOSE_LOG(context.logger, "Made framebuffers.");
 }
 void Swapchain::createSyncObjects(){
-    imageAvailableSemaphores.resize(context.config.maxFramesInFlight);
-    renderFinishedSemaphores.resize(context.config.maxFramesInFlight);
-    inFlightFences.resize(context.config.maxFramesInFlight);
+    imageAvailableSemaphores.resize(window.getConfig().maxFramesInFlight);
+    renderFinishedSemaphores.resize(window.getConfig().maxFramesInFlight);
+    inFlightFences.resize(window.getConfig().maxFramesInFlight);
 
     VkSemaphoreCreateInfo semaphoreInfo{};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -168,7 +171,7 @@ void Swapchain::createSyncObjects(){
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     fenceInfo.pNext = nullptr;
 
-    for(size_t i = 0; i < context.config.maxFramesInFlight; i++){
+    for(size_t i = 0; i < window.getConfig().maxFramesInFlight; i++){
         if(vkCreateSemaphore(context.logicalDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
             vkCreateSemaphore(context.logicalDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
             vkCreateFence(context.logicalDevice, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS){
@@ -182,7 +185,7 @@ void Swapchain::recreateSwapchain(){
     glfwGetFramebufferSize(window.window, &width, &height);
 
     // pause while minimized
-    if(context.config.pauseOnMinimize){
+    if(window.getConfig().pauseOnMinimize){
         while(width == 0 || height == 0){
             glfwGetFramebufferSize(window.window, &width, &height);
             glfwWaitEvents();
@@ -224,7 +227,7 @@ VkSurfaceFormatKHR Swapchain::chooseSwapSurfaceFormat(const std::vector<VkSurfac
 }
 VkPresentModeKHR Swapchain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes){
     for(const auto& availablePresentMode : availablePresentModes){
-        if(availablePresentMode == context.config.preferredSwapchainImagePresentMode){
+        if(availablePresentMode == window.getConfig().preferredSwapchainImagePresentMode){
             return availablePresentMode;
         }
     }

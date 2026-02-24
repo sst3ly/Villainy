@@ -9,11 +9,11 @@
 #include <stdexcept>
 
 #include "swapchain.hpp"
+#include "logger.hpp"
 
 namespace vlny{
 
 class Context;
-class Logger;
 class GraphicsPipeline;
 
 struct WindowConfig{
@@ -22,6 +22,14 @@ struct WindowConfig{
     std::string title = "Villainy";
     bool fullscreen = false;
     bool resizable = true;
+    
+    int maxFramesInFlight = 2;
+
+    VkFormat swapchainImageFormat = VK_FORMAT_R8G8B8A8_SRGB;
+    VkColorSpaceKHR swapchainImageColorspace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+    VkPresentModeKHR preferredSwapchainImagePresentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+
+    bool pauseOnMinimize = true;
 
     double clearColor[3] = {0.0f, 0.0f, 0.0f};
 };
@@ -40,6 +48,8 @@ public:
     bool windowOpen();
     void setWindowShouldClose();
     void setWindowShouldClose(bool val);
+
+    void setPresentMode(VkPresentModeKHR mode);
     Swapchain& getSwapchain();
 private:
     WindowConfig config;
@@ -58,7 +68,7 @@ private:
         win->logger.log(VERBOSE, "Window resized to " + std::to_string(width) + "x" + std::to_string(height));
         win->config.width = width;
         win->config.height = height;
-        if(win->context.config.pauseOnMinimize && (width == 0 || height == 0)){
+        if(win->config.pauseOnMinimize && (width == 0 || height == 0)){
             win->logger.log(VERBOSE, "Window minimized, pausing context...");
         }
         if(win->swapchain.has_value()){

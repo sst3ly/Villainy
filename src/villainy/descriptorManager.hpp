@@ -9,6 +9,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include "window.hpp"
+
 namespace vlny{
 
 class Context;
@@ -35,7 +37,7 @@ struct DescriptorBinding {
 
 class DescriptorManager {
 public:
-    DescriptorManager(Context& context);
+    DescriptorManager(Context& context, Window& window);
     ~DescriptorManager();
 
     // Delete copy constructor and assignment operator

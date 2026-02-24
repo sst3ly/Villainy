@@ -41,33 +41,10 @@ IndexBuffer::~IndexBuffer(){
         indexBufferMemory = VK_NULL_HANDLE;
     }
 }
-/*
-UniformBufferDescriptorSetBuilder::UniformBufferDescriptorSetBuilder(Context& context) : context(context) {
-    descriptorCount = context.config.maxFramesInFlight;
-}
 
-void UniformBufferDescriptorSetBuilder::addTextureSampler(Sampler& sampler, Texture& texture){
-    VkDescriptorPoolSize dps{};
-    dps.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    dps.descriptorCount = descriptorCount;
-    poolSizes.push_back(dps);
-}
-
-void UniformBufferDescriptorSetBuilder::build(){
-    VkDescriptorPoolCreateInfo poolInfo{};
-    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = scast_ui32(poolSizes.size());
-    poolInfo.pPoolSizes = poolSizes.data();
-    poolInfo.maxSets = scast_ui32(descriptorCount);
-
-    if(vkCreateDescriptorPool(context.logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS){
-        throw std::runtime_error("Failed to make descriptor pool!");
-    }
-}*/
-
-UniformBuffer::UniformBuffer(Context& context, size_t bufferSize, std::vector<VkDescriptorPoolSize> poolSizes)
+UniformBuffer::UniformBuffer(Context& context, WindowConfig windowconfig, size_t bufferSize, std::vector<VkDescriptorPoolSize> poolSizes)
     : context(context)
-    , maxFramesInFlight(context.config.maxFramesInFlight)
+    , maxFramesInFlight(windowconfig.maxFramesInFlight)
     , bufferSize(bufferSize)
     , poolSizes(std::move(poolSizes))
     , descriptorPool(VK_NULL_HANDLE)

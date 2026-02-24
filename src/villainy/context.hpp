@@ -63,14 +63,6 @@ struct ContextConfig{
     std::vector<const char*> deviceExts = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
     bool macosDriverCompat = true;
-
-    int maxFramesInFlight = 2;
-
-    VkFormat swapchainImageFormat = VK_FORMAT_R8G8B8A8_SRGB;
-    VkColorSpaceKHR swapchainImageColorspace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-    VkPresentModeKHR preferredSwapchainImagePresentMode = VK_PRESENT_MODE_MAILBOX_KHR;
-
-    bool pauseOnMinimize = true;
 };
 
 class Context{

@@ -42,6 +42,13 @@ void Window::setWindowShouldClose(bool val){
     glfwSetWindowShouldClose(window, val);
 }
 
+void Window::setPresentMode(VkPresentModeKHR mode){
+    config.preferredSwapchainImagePresentMode = mode;
+    if(swapchain.has_value()){
+        swapchain->recreateSwapchain();
+    }
+}
+
 void Window::init(){
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, config.resizable);

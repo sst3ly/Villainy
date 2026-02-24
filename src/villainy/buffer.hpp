@@ -9,6 +9,7 @@
 
 #include "logger.hpp"
 #include "context.hpp"
+#include "window.hpp"
 
 namespace vlny{
 
@@ -16,7 +17,6 @@ class Texture;
 class Sampler;
 class CommandBuffer;
 class Swapchain;
-class Window;
 template<typename Vertex> class Renderer;
 
 template<typename Vertex>
@@ -52,30 +52,9 @@ private:
 
     template<typename V> friend class Renderer;
 };
-/*
-class UniformBufferDescriptorSetBuilder{
-public:
-    UniformBufferDescriptorSetBuilder(Context& context);
-
-    template <typename ubo>
-    void addUniformBuffer(uint32_t binding, VkShaderStageFlags shaderStageFlags);
-    void addTextureSampler(Sampler& sampler, Texture& texture);
-
-    void build();
-private:
-    Context& context;
-    int descriptorCount;
-
-    VkDescriptorPool descriptorPool;
-
-    std::vector<VkDescriptorPoolSize> poolSizes;
-    std::vector<VkDescriptorSetLayoutBinding> bindings;
-    std::vector<VkWriteDescriptorSet> writes;
-};
-*/
 
 struct UniformBuffer {
-    UniformBuffer(Context& context, size_t bufferSize, std::vector<VkDescriptorPoolSize> poolSizes);
+    UniformBuffer(Context& context, WindowConfig windowconfig, size_t bufferSize, std::vector<VkDescriptorPoolSize> poolSizes);
     ~UniformBuffer();
 
     // Delete copy constructor and assignment operator
