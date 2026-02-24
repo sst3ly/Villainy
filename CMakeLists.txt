@@ -34,7 +34,15 @@ set(VILLAINY_SOURCES
     src/villainy/texture.cpp
 )
 
-add_library(VillainyLib ${VILLAINY_SOURCES})
+add_library(VillainyLib_static ${VILLAINY_SOURCES})
+add_library(VillainyLib_shared ${VILLAINY_SOURCES})
+set_target_properties(VillainyLib_static PROPERTIES OUTPUT_NAME "VillainyLib")
+set_target_properties(VillainyLib_shared PROPERTIES OUTPUT_NAME "VillainyLib")
+set_target_properties(VillainyLib_shared PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin # .dll
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib # .lib/.a
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib # .so/.dylib
+)
 
 # executable
 add_executable(villainy src/main.cpp)
@@ -52,7 +60,6 @@ target_compile_options(villainy PRIVATE
 # link libraries
 target_link_libraries(villainy
     Vulkan::Vulkan
-    #MoltenVK
     glfw.3           # <-- IMPORTANT: matches libglfw.3.dylib
-    VillainyLib
+    VillainyLib_static
 )
