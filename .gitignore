@@ -25,3 +25,4 @@ target/
 /.VSCodeCounter
 .DS_STORE
 Villainy.zip
+/.cache
