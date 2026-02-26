@@ -76,6 +76,8 @@ public:
     void waitIdle();
 
     Logger logger;
+
+    Context& operator=(Context&& other);
 private:
     ContextConfig config;
 

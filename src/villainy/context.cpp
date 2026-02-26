@@ -1,5 +1,6 @@
 #include "villainy.hpp"
 #include "buffer.hpp"
+#include "vulkan/vulkan_core.h"
 
 #include <GLFW/glfw3.h>
 
@@ -26,6 +27,36 @@ void Context::waitIdle(){
         vkDeviceWaitIdle(logicalDevice);
     }
 }
+
+Context& Context::operator=(Context&& other) {
+    if (this == &other) return *this;
+
+    waitIdle();
+
+    config = std::move(other.config);
+    logger = std::move(other.logger);
+
+    // move vulkan handles
+    vkInstance = other.vkInstance;
+    physicalDevice = other.physicalDevice;
+    logicalDevice = other.logicalDevice;
+    graphicsQueue = other.graphicsQueue;
+    presentQueue = other.presentQueue;
+    debugMessenger = other.debugMessenger;
+    queueFamilyIndices = other.queueFamilyIndices;
+    maxAnisotropy = other.maxAnisotropy;
+
+    // null out the other so its destructor doesn't double-destroy
+    other.vkInstance = VK_NULL_HANDLE;
+    other.physicalDevice = VK_NULL_HANDLE;
+    other.logicalDevice = VK_NULL_HANDLE;
+    other.debugMessenger = VK_NULL_HANDLE;
+
+    baseInit();
+
+    return *this;
+}
+
 
 // ---------------------------------------------------------------------------------------------------------
 

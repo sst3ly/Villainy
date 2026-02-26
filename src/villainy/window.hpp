@@ -36,8 +36,8 @@ struct WindowConfig{
 
 class Window{
 public:
-    Window(Context& context);
-    Window(WindowConfig c, Context& context);
+    Window(Context* context);
+    Window(WindowConfig c, Context* context);
 
     WindowConfig getConfig();
 
@@ -51,9 +51,11 @@ public:
 
     void setPresentMode(VkPresentModeKHR mode);
     Swapchain& getSwapchain();
+
+    Window& operator=(Window&& other);
 private:
     WindowConfig config;
-    Context& context;
+    Context* context;
     Logger& logger;
     std::optional<Swapchain> swapchain;
 

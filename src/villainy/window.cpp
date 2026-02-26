@@ -4,13 +4,13 @@
 
 namespace vlny{
 
-Window::Window(Context& context) : config(), context(context), logger(context.logger) { 
+Window::Window(Context* context) : config(), context(context), logger(context->logger) { 
     init();
-    swapchain.emplace(context, *this); // delayed construction(after init)
+    swapchain.emplace(*context, *this); // delayed construction(after init)
 }
-Window::Window(WindowConfig c, Context& context) : config(c), context(context), logger(context.logger) {
+Window::Window(WindowConfig c, Context* context) : config(c), context(context), logger(context->logger) {
     init();
-    swapchain.emplace(context, *this); // delayed construction(after init)
+    swapchain.emplace(*context, *this); // delayed construction(after init)
 }
 
 WindowConfig Window::getConfig(){
@@ -66,10 +66,27 @@ void Window::init(){
 }
 
 void Window::createSurface(){
-    if(glfwCreateWindowSurface(context.vkInstance, window, nullptr, &windowSurface) != VK_SUCCESS){
+    if(glfwCreateWindowSurface(context->vkInstance, window, nullptr, &windowSurface) != VK_SUCCESS){
         throw std::runtime_error("Failed to create window surface!");
     }
     logger.log(VERBOSE, "Created window surface!");
+}
+
+Window& Window::operator=(Window&& other){
+    if (this == &other) return *this;
+
+    context = other.context;
+
+    if (windowSurface != VK_NULL_HANDLE)
+        vkDestroySurfaceKHR(context->vkInstance, windowSurface, nullptr);
+    if (window)
+        glfwDestroyWindow(window);
+
+    config = std::move(other.config);
+
+    init();
+
+    return *this;
 }
 
 }
