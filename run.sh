@@ -1,9 +1,15 @@
-while getopts "clean" opt; do
-    case $opt in
-        clean) rm -rf build ;;
-        \?) echo "Invalid option: -$OPTARG" >&2 ; exit 1;;
+for arg in "$@"; do
+    case $arg in
+        --clean|-c)
+            CLEAN=true
+            ;;
     esac
 done
+
+if [ "$CLEAN" = true ]; then
+    rm -rf build/
+fi
+
 ./build.sh
 echo "\n"
 cd build
