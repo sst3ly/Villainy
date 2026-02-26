@@ -29,7 +29,6 @@ class ShaderProgram;
 class GraphicsPipeline;
 struct CommandPool;
 class DescriptorManager;
-template <typename Vertex>
 class Renderer;
 
 struct QueueFamilyIndices{
@@ -136,7 +135,7 @@ private:
     friend struct IndexBuffer;
     friend struct UniformBuffer;
     friend class DescriptorManager;
-    template<typename Vertex> friend class Renderer;
+    friend class Renderer;
     friend VkImageView makeImageView(Context& context, VkImage image, VkFormat format);
     friend void createBuffer(Context& context, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
     friend void cleanup(Window* windows, int windowCount, Context& context);

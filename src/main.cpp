@@ -22,7 +22,7 @@ int main(){
         cfg.enableValidationLayers = true;
         cfg.minLogSeverity = vlny::LogSeverity::VERBOSE;
         vlny::Context context(cfg);
-        vlny::Window window(context);
+        vlny::Window window(&context);
 
         {
             struct DummyUbo {
@@ -70,8 +70,9 @@ int main(){
                 uniformBuffer.updateBuffer(i, &dummy);
             }
 
-            vlny::Renderer<vlny::ColorVertex> renderer(context, window, pipeline, window.getSwapchain());
-            renderer.addRenderObject(vertexBuffer, indexBuffer, uniformBuffer);
+            vlny::Renderer renderer(context, window, pipeline, window.getSwapchain());
+            vlny::RenderObject renderObject{vertexBuffer, indexBuffer, uniformBuffer};
+            renderer.addRenderObject(renderObject);
         
             int frames = 0;
             auto startTime = std::chrono::high_resolution_clock::now();

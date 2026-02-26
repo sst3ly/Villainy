@@ -67,30 +67,39 @@ private:
 
     void init();
     
-    template<typename Vertex> friend class Renderer;
+    friend class Renderer;
+    friend class MultiRenderer;
+};
+
+struct RenderObjectBase {
+    virtual ~RenderObjectBase() = default;
+    virtual void draw(VkCommandBuffer commandBuffer) = 0;
 };
 
 template<typename Vertex>
-struct RenderObject{
+struct RenderObject : public RenderObjectBase {
+    RenderObject(VertexBuffer<Vertex>& vb, IndexBuffer& ib, UniformBuffer& ub);
+
     VertexBuffer<Vertex>& vb;
     IndexBuffer& ib;
     UniformBuffer& ub;
+
+    void draw(VkCommandBuffer commandBuffer) override;
 };
 
-template<typename Vertex>
 class Renderer{
 public:
     Renderer(Context& context, Window& window, GraphicsPipeline& pipeline, Swapchain& swapchain);
-    
+
     void drawFrame();
 
-    int addRenderObject(RenderObject<Vertex> ro);
-    int addRenderObject(VertexBuffer<Vertex>& vb, IndexBuffer& ib, UniformBuffer& ub);
-    int addRenderObjects(std::vector<RenderObject<Vertex>> ros);
-    RenderObject<Vertex> getRenderObject(int index);
+    int addRenderObject(std::unique_ptr<RenderObjectBase> ro);
+    int addRenderObjects(std::vector<std::unique_ptr<RenderObjectBase>> ros);
+    template <typename Vertex>
+    int addRenderObject(RenderObject<Vertex>& ro);
     void removeRenderObject(int index);
 private:
-    std::vector<RenderObject<Vertex>> renderObjects;
+    std::vector<std::unique_ptr<RenderObjectBase>> renderObjects;
 
     uint32_t currentFrame = 0;
 

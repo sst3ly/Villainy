@@ -35,7 +35,7 @@ private:
     VkCommandBuffer vkCommandBuffer;
 
     friend struct CommandPool;
-    template <typename Vertex> friend class Renderer;
+    friend class Renderer;
     friend void copyBufferToImage(Context& context, CommandPool commandPool, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
     friend void transitionImageLayout(Context& context, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
     friend void copyBuffer(Context& context, VkBuffer srcBuf, VkBuffer dstBuf, VkDeviceSize size);

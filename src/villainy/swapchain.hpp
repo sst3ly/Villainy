@@ -17,7 +17,7 @@ namespace vlny{
 class Context;
 class Window;
 class GraphicsPipeline;
-template<typename Vertex> class Renderer;
+class Renderer;
 
 class Swapchain{
 public:
@@ -63,7 +63,8 @@ private:
     friend class Context;
     friend class Window;
     friend class GraphicsPipeline;
-    template<typename Vertex> friend class Renderer;
+    friend class Renderer;
+    friend class MultiRenderer;
 };
 
 }
