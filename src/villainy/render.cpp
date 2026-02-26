@@ -302,7 +302,7 @@ void Renderer::recordCommandBuffer(CommandBuffer cmdBuf, uint32_t imageIndex){
 
     for(const auto& ro : renderObjects){
         const auto& renderObject = ro.get();
-        renderObject->draw(commandBuffer);
+        renderObject->draw(commandBuffer, pipeline, currentFrame);
     }
 
     vkCmdEndRenderPass(commandBuffer);

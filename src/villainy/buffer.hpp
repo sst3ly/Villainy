@@ -71,7 +71,7 @@ struct UniformBuffer {
     void updateDescriptorSets();
     
     VkDescriptorSetLayout getDescriptorSetLayout() const { return descriptorSetLayout; }
-    VkDescriptorSet getDescriptorSet(uint32_t frame) const { return descriptorSets[frame]; }
+    VkDescriptorSet& getDescriptorSet(uint32_t frame) { return descriptorSets[frame]; }
     void* getMappedMemory(uint32_t frame) const { return uniformBuffersMapped[frame]; }
 
 private:

@@ -68,12 +68,12 @@ private:
     void init();
     
     friend class Renderer;
-    friend class MultiRenderer;
+    template <typename V> friend struct RenderObject;
 };
 
 struct RenderObjectBase {
     virtual ~RenderObjectBase() = default;
-    virtual void draw(VkCommandBuffer commandBuffer) = 0;
+    virtual void draw(VkCommandBuffer commandBuffer, GraphicsPipeline& pipeline, int currentFrame) = 0;
 };
 
 template<typename Vertex>
@@ -84,7 +84,7 @@ struct RenderObject : public RenderObjectBase {
     IndexBuffer& ib;
     UniformBuffer& ub;
 
-    void draw(VkCommandBuffer commandBuffer) override;
+    void draw(VkCommandBuffer commandBuffer, GraphicsPipeline& pipeline, int currentFrame) override;
 };
 
 class Renderer{

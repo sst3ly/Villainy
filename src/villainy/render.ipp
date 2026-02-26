@@ -1,6 +1,7 @@
 #pragma once
 
 #include "render.hpp"
+#include "vulkan/vulkan_core.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -11,7 +12,7 @@ template <typename Vertex>
 RenderObject<Vertex>::RenderObject(VertexBuffer<Vertex>& vb, IndexBuffer& ib, UniformBuffer& ub) : vb(vb), ib(ib), ub(ub) {}
 
 template <typename Vertex>
-void RenderObject<Vertex>::draw(VkCommandBuffer commandBuffer){
+void RenderObject<Vertex>::draw(VkCommandBuffer commandBuffer, GraphicsPipeline& pipeline, int currentFrame){
     VkBuffer vertexBuffers[] = {vb.vertexBuffer};
     VkBuffer indexBuffer = ib.indexBuffer;
     auto& indices = ib.indices;
@@ -19,6 +20,7 @@ void RenderObject<Vertex>::draw(VkCommandBuffer commandBuffer){
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.pipelineLayout, 0, 1, &ub.getDescriptorSet(currentFrame), 0, nullptr);
     vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 }
 
