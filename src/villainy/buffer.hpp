@@ -19,7 +19,7 @@ class Sampler;
 class CommandBuffer;
 class Swapchain;
 class Renderer;
-template <typename Vertex> class RenderObject;
+template <typename Vertex> struct RenderObject;
 
 template<typename Vertex>
 struct VertexBuffer{
@@ -37,7 +37,7 @@ private:
     VkBuffer vertexBuffer = VK_NULL_HANDLE;
     VkDeviceMemory vertexBufferMemory = VK_NULL_HANDLE;
 
-    template <typename V> friend class RenderObject;
+    template <typename V> friend struct RenderObject;
 };
 
 struct IndexBuffer{
@@ -52,7 +52,7 @@ private:
     VkBuffer indexBuffer = VK_NULL_HANDLE;
     VkDeviceMemory indexBufferMemory = VK_NULL_HANDLE;
 
-    template <typename V> friend class RenderObject;
+    template <typename V> friend struct RenderObject;
 };
 
 struct UniformBuffer {
@@ -94,7 +94,7 @@ private:
     void createDescriptorPool();
     void cleanup();
 
-    template <typename V> friend class RenderObject;
+    template <typename V> friend struct RenderObject;
 };
 
 
