@@ -9,4 +9,5 @@ mkdir -p target/include
 
 cp build/libVillainyLib.a target/lib
 cp src/villainy/*.hpp target/include
+cp src/villainy/*.ipp target/include
 zip -r Villainy.zip target
