@@ -162,11 +162,11 @@ void GraphicsPipeline::init(){
     VILLAINY_VERBOSE_LOG(context.logger, "Made graphics pipeline.");
 }
 
-Renderer::Renderer(Context& context, Window& window, GraphicsPipeline& pipeline, Swapchain& swapchain) : context(context), window(window), pipeline(pipeline), swapchain(swapchain), commandPool(context) {
+Renderer::Renderer(Context& context, Window& window, Swapchain& swapchain) : context(context), window(window),   swapchain(swapchain), commandPool(context) {
     cmdBufs = commandPool.createCommandBuffers(context, window.getConfig().maxFramesInFlight);
 }
 
-void Renderer::drawFrame(){
+void Renderer::drawFrame(GraphicsPipeline& pipeline){
     vkWaitForFences(context.logicalDevice, 1, &swapchain.inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
     uint32_t imageIndex;
@@ -182,7 +182,7 @@ void Renderer::drawFrame(){
 
     vkResetFences(context.logicalDevice, 1, &swapchain.inFlightFences[currentFrame]);
     vkResetCommandBuffer(cmdBufs[currentFrame].vkCommandBuffer, 0);
-    recordCommandBuffer(cmdBufs[currentFrame], imageIndex);
+    recordCommandBuffer(cmdBufs[currentFrame], imageIndex, pipeline);
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -247,7 +247,7 @@ void Renderer::removeRenderObject(int index){
     renderObjects.erase(renderObjects.begin() + index);
 }
 
-void Renderer::recordCommandBuffer(CommandBuffer cmdBuf, uint32_t imageIndex){
+void Renderer::recordCommandBuffer(CommandBuffer cmdBuf, uint32_t imageIndex, GraphicsPipeline& pipeline){
     VkCommandBuffer commandBuffer = cmdBuf.vkCommandBuffer;
 
     VkCommandBufferBeginInfo beginInfo{};

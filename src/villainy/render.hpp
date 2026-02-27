@@ -89,9 +89,9 @@ struct RenderObject : public RenderObjectBase {
 
 class Renderer{
 public:
-    Renderer(Context& context, Window& window, GraphicsPipeline& pipeline, Swapchain& swapchain);
+    Renderer(Context& context, Window& window, Swapchain& swapchain);
 
-    void drawFrame();
+    void drawFrame(GraphicsPipeline& pipeline);
 
     int addRenderObject(std::unique_ptr<RenderObjectBase> ro);
     int addRenderObjects(std::vector<std::unique_ptr<RenderObjectBase>> ros);
@@ -105,13 +105,12 @@ private:
 
     Context& context;
     Window& window;
-    GraphicsPipeline& pipeline;
     Swapchain& swapchain;
 
     CommandPool commandPool;
     std::vector<CommandBuffer> cmdBufs;
 
-    void recordCommandBuffer(CommandBuffer cmdBuf, uint32_t imageIndex);
+    void recordCommandBuffer(CommandBuffer cmdBuf, uint32_t imageIndex, GraphicsPipeline& pipeline);
 };
 
 }

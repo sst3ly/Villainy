@@ -19,10 +19,12 @@ int main(){
 
     try{
         vlny::ContextConfig cfg;
+        vlny::WindowConfig winCfg;
         cfg.enableValidationLayers = true;
         cfg.minLogSeverity = vlny::LogSeverity::VERBOSE;
+        winCfg.preferredSwapchainImagePresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
         vlny::Context context(cfg);
-        vlny::Window window(&context);
+        vlny::Window window(winCfg, &context);
 
         {
             struct DummyUbo {
@@ -70,7 +72,7 @@ int main(){
                 uniformBuffer.updateBuffer(i, &dummy);
             }
 
-            vlny::Renderer renderer(context, window, pipeline, window.getSwapchain());
+            vlny::Renderer renderer(context, window, window.getSwapchain());
             vlny::RenderObject renderObject{vertexBuffer, indexBuffer, uniformBuffer};
             renderer.addRenderObject(renderObject);
         
@@ -97,7 +99,7 @@ int main(){
                 vertexBuffer.updateBuffer(vertices.data(), vertices.size() * sizeof(vlny::ColorVertex));
                 
                 // draw frame
-                renderer.drawFrame();
+                renderer.drawFrame(pipeline);
 
                 // fps logging
                 float elapsed = std::chrono::duration<float, std::chrono::seconds::period>(now - startTime).count();
