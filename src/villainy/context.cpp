@@ -10,7 +10,7 @@ bool QueueFamilyIndices::isComplete(){
     return graphicsFamily.has_value() && presentFamily.has_value();
 }
 
-Context::Context(void) : logger(config.appName) { 
+Context::Context(void) : config(), logger(config.appName) { 
     baseInit();
 }
 Context::Context(ContextConfig c) : config(c), logger(c.appName) { 
