@@ -67,10 +67,12 @@ if(APPLE)
         glfw.3
         VillainyLib_static
     )
-else(UNIX)
+elseif(UNIX)
     target_link_libraries(villainy
         Vulkan::Vulkan
         glfw
         VillainyLib_static
     )
+else() # windows
+    target_link_libraries(villainy Vulkan::Vulkan glfw VillainyLib_static)
 endif()
