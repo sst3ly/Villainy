@@ -23,11 +23,13 @@ jobs:
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install glfw molten-vk
+        run: |
+          brew install glfw molten-vk vulkan-headers
+          echo "VULKAN_SDK=/opt/homebrew" >> $GITHUB_ENV
 
       - name: Install GLFW (Windows)
         if: runner.os == 'Windows'
-        run: vcpkg install glfw3 --triplet x64-windows
+        run: C:\vcpkg\vcpkg.exe install glfw3:x64-windows
 
       - name: Install Vulkan (Windows)
         if: runner.os == 'Windows'
@@ -35,7 +37,7 @@ jobs:
 
       - name: Configure (macOS/Linux)
         if: runner.os == 'macOS' || runner.os == 'Linux'
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
 
       - name: Configure (Windows)
         if: runner.os == 'Windows'
