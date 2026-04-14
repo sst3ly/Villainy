@@ -25,12 +25,21 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install glfw molten-vk
 
-      - name: Install dependencies (Windows)
+      - name: Install GLFW (Windows)
+        if: runner.os == 'Windows'
+        run: vcpkg install glfw3 --triplet x64-windows
+
+      - name: Install Vulkan (Windows)
         if: runner.os == 'Windows'
         uses: humbletim/install-vulkan-sdk@v1.1.1
 
-      - name: Configure
+      - name: Configure (macOS/Linux)
+        if: runner.os == 'macOS' || runner.os == 'Linux'
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Configure (Windows)
+        if: runner.os == 'Windows'
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
 
       - name: Build
         run: cmake --build build --config Release
