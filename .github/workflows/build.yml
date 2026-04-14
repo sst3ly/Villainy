@@ -27,10 +27,6 @@ jobs:
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
-        uses: actions/checkout@v4  # placeholder - see note below
-
-      - name: Install Vulkan SDK (Windows)
-        if: runner.os == 'Windows'
         uses: humbletim/install-vulkan-sdk@v1.1.1
 
       - name: Configure
