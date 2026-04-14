@@ -40,6 +40,10 @@ set(VILLAINY_SOURCES
 
 add_library(VillainyLib_static ${VILLAINY_SOURCES})
 add_library(VillainyLib_shared ${VILLAINY_SOURCES})
+target_include_directories(VillainyLib_static PUBLIC ${INCLUDE_ROOT}/include)
+target_include_directories(VillainyLib_shared PUBLIC ${INCLUDE_ROOT}/include)
+target_link_libraries(VillainyLib_static PUBLIC Vulkan::Vulkan)
+target_link_libraries(VillainyLib_shared PUBLIC Vulkan::Vulkan)
 set_target_properties(VillainyLib_static PROPERTIES OUTPUT_NAME "VillainyLib")
 set_target_properties(VillainyLib_shared PROPERTIES OUTPUT_NAME "VillainyLib")
 set_target_properties(VillainyLib_shared PROPERTIES
