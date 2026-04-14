@@ -1,0 +1,48 @@
+name: Build Villainy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libglfw3-dev libvulkan-dev
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install glfw molten-vk
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/checkout@v4  # placeholder - see note below
+
+      - name: Install Vulkan SDK (Windows)
+        if: runner.os == 'Windows'
+        uses: humbletim/install-vulkan-sdk@v1.1.1
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libVillainyLib-${{ runner.os }}
+          path: |
+            build/**/*.a
+            build/**/*.lib
