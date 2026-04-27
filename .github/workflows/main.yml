@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        timeout-minutes: 10
+        with: 
+          lfs: true
       
       - name: Install build dependencies (Linux)
         if: runner.os == 'Linux'
