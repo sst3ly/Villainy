@@ -6,14 +6,28 @@ on:
   pull_request:
     branches: [ main ]
 
+  workflow_dispatch:
+    inputs:
+      os:
+        description: 'OS to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    
+        os: ${{ (github.event_name == 'workflow_dispatch' && inputs.os != 'all') && fromJSON(format('["{0}"]', inputs.os)) || fromJSON('["ubuntu-latest","windows-latest","macos-latest"]') }}
+
     runs-on: ${{ matrix.os }}
-  
+
     env:
       VULKAN_VERSION: 1.4.341.1
 
@@ -21,15 +35,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         timeout-minutes: 10
-        with: 
+        with:
           lfs: true
-      
+
       - name: Install build dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y g++ cmake ninja-build
-      
+          sudo apt-get install -y g++ cmake ninja-build lsb-release libglfw3-dev
+
+      - name: Install build dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          (New-Object System.Net.WebClient).DownloadFile(
+            "https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.bin.WIN64.zip",
+            "$PWD\glfw.zip"
+          )
+          Expand-Archive "$PWD\glfw.zip" -DestinationPath "C:\glfw"
+          $base = "C:/glfw/glfw-3.4.bin.WIN64"
+          $lines = @(
+            "add_library(glfw3::glfw3 STATIC IMPORTED)",
+            "set_target_properties(glfw3::glfw3 PROPERTIES",
+            "    IMPORTED_LOCATION `"$base/lib-vc2022/glfw3.lib`"",
+            "    INTERFACE_INCLUDE_DIRECTORIES `"$base/include`"",
+            "    INTERFACE_LINK_LIBRARIES `"gdi32;user32;shell32`"",
+            ")",
+            "set(glfw3_FOUND TRUE)"
+          )
+          New-Item -ItemType Directory -Force "C:\glfw\cmake" | Out-Null
+          $lines | Set-Content "C:\glfw\cmake\glfw3Config.cmake"
+          Write-Host "glfw3Config.cmake created"
+
       - name: Install build dependencies (MacOS)
         if: runner.os == 'macOS'
         run: brew install cmake ninja
@@ -38,28 +75,49 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
-          sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-jammy.list https://packages.lunarg.com/vulkan/lunarg-vulkan-jammy.list
+          CODENAME=$(lsb_release -cs)
+          sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-${CODENAME}.list https://packages.lunarg.com/vulkan/lunarg-vulkan-${CODENAME}.list
           sudo apt update
           sudo apt install -y vulkan-sdk
-      
+          echo "VULKAN_SDK=/usr" >> $GITHUB_ENV
+
       - name: Setup Vulkan SDK (Windows)
         if: runner.os == 'Windows'
+        shell: pwsh
+        timeout-minutes: 15
         run: |
           $url = "https://sdk.lunarg.com/sdk/download/$env:VULKAN_VERSION/windows/vulkansdk-windows-X64-$env:VULKAN_VERSION.exe"
-          Invoke-WebRequest -Uri $url -OutFile VulkanSDK.exe
-          .\VulkanSDK.exe /S
-          echo "VULKAN_SDK=C:\VulkanSDK\$env:VULKAN_VERSION" >> $env:GITHUB_ENV
-        
+          Write-Host "Downloading Vulkan SDK..."
+          (New-Object System.Net.WebClient).DownloadFile($url, "$PWD\VulkanSDK.exe")
+          Write-Host "Installing Vulkan SDK..."
+          $proc = Start-Process -FilePath "$PWD\VulkanSDK.exe" `
+            -ArgumentList "--root C:\VulkanSDK --accept-licenses --default-answer --confirm-command install" `
+            -Wait -PassThru
+          if ($proc.ExitCode -ne 0) { throw "Installer exited with code $($proc.ExitCode)" }
+          $vulkanH = Get-ChildItem "C:\VulkanSDK" -Recurse -Filter "vulkan.h" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $vulkanH) { throw "vulkan.h not found after installation" }
+          $sdkRoot = $vulkanH.Directory.Parent.Parent.FullName
+          Write-Host "Vulkan SDK root: $sdkRoot"
+          echo "VULKAN_SDK=$sdkRoot" >> $env:GITHUB_ENV
+
       - name: Setup Vulkan SDK (MacOS)
         if: runner.os == 'macOS'
         run: |
-          wget https://sdk.lunarg.com/sdk/download/$env:VULKAN_VERSION/mac/vulkansdk-macos-$env:VULKAN_VERSION.zip
-          unzip vulkansdk-macos-$env:VULKAN_VERSION.zip -d ~/VulkanSDK
-          sudo ~/VulkanSDK/vulkansdk-macos-$env:VULKAN_VERSION/InstallVulkan.app/Contents/MacOS/InstallVulkan --root ~/VulkanSDK --accept-licenses --default-answer --confirm-command install
-          echo "VULKAN_SDK=$HOME/VulkanSDK/macOS" >> $GITHUB_ENV
-      
+          brew install vulkan-headers vulkan-loader molten-vk \
+            spirv-tools glslang vulkan-validationlayers
+          echo "VULKAN_SDK=$(brew --prefix)" >> $GITHUB_ENV
+
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        shell: pwsh
+        run: |
+          $cmake_args = @("-S", ".", "-B", "build", "-DCMAKE_BUILD_TYPE=Release")
+          if ($IsWindows) {
+            $glfwConfig = Get-ChildItem "C:\glfw" -Recurse -Filter "glfw3Config.cmake" | Select-Object -First 1
+            if (-not $glfwConfig) { throw "glfw3Config.cmake not found under C:\glfw" }
+            Write-Host "glfw3Config.cmake: $($glfwConfig.Directory.FullName)"
+            $cmake_args += "-Dglfw3_DIR=$($glfwConfig.Directory.FullName)"
+          }
+          cmake @cmake_args
 
       - name: Build
         run: cmake --build build --config Release
