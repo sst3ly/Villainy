@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <memory>
 
 #include "shader.hpp"
 #include "command.hpp"
