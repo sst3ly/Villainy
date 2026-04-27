@@ -78,5 +78,5 @@ elseif(UNIX)
         VillainyLib_static
     )
 else() # windows
-    target_link_libraries(villainy Vulkan::Vulkan glfw VillainyLib_static)
+    target_link_libraries(villainy Vulkan::Vulkan glfw3::glfw3 VillainyLib_static)
 endif()
