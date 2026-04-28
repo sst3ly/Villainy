@@ -56,10 +56,7 @@ struct ContextConfig{
 
     bool enableValidationLayers = false;
     std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
-    VKAPI_ATTR VkBool32 VKAPI_CALL (*validationLayerDebugCallback)(VkDebugUtilsMessageSeverityFlagBitsEXT messegeSeverity,
-        VkDebugUtilsMessageTypeFlagsEXT messageType,
-        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData) = Logger::validationLayerCallback;
+    PFN_vkDebugUtilsMessengerCallbackEXT validationLayerDebugCallback = Logger::validationLayerCallback;
 
     std::vector<const char*> deviceExts = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
