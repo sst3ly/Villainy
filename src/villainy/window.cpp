@@ -89,4 +89,10 @@ Window& Window::operator=(Window&& other){
     return *this;
 }
 
+bool Window::getAndResetResized(){
+    bool wasResized = resized;
+    resized = false;
+    return wasResized;
 }
+
+} // namespace vlny

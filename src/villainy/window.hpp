@@ -53,11 +53,14 @@ public:
     Swapchain& getSwapchain();
 
     Window& operator=(Window&& other);
+
+    bool getAndResetResized();
 private:
     WindowConfig config;
     Context* context;
     Logger& logger;
     std::optional<Swapchain> swapchain;
+    bool resized = false;
 
     GLFWwindow* window;
     VkSurfaceKHR windowSurface;
